@@ -1,5 +1,241 @@
 <!DOCTYPE html>
 <html>
-<head></head>
-<body></body>
+
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+  <script src="script.js"></script>
+</head>
+
+<body ng-app="store">
+  <div ng-controller="ProductController as ctrl">
+    <nav class="navbar navbar-toggleable-md navbar-light bg-faded sticky-top">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="cart-link" href ng-click="ctrl.showCart()" title="View Cart">
+        <img class="cart" src='https://conversio.com/wp-content/themes/receiptful/assets/img/conversio/icons/emails/abandoned-cart.svg'>
+        <label class="badge" ng-show="ctrl.show">{{ ctrl.cart.length }}</label>
+      </a>
+      <a class="navbar-brand" title="Home" href>Papa's Family Workshop</a>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href>Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#indoor-appliances">Indoor Appliances</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#outdoor-decor">Outdoor Decor</a>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search">
+          <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </div>
+    </nav>
+    <div class="jumbotron">
+      <h1 class="display-3">Quality Wood Work</h1>
+      <p class="lead">All Papa's Family Workshop products are guaranteed to be up to Papa's quality standard so you can decorate your home with ease.</p>
+      <hr class="my-4">
+      <p>Choose from our selection of products to order readily available items or special request past prototypes.</p>
+      <p class="lead">
+        <a class="btn btn-info btn-lg" href="#" role="button">Learn more</a>
+      </p>
+    </div>
+    <a name="indoor-appliances"></a>
+    <div class="container">
+      <div class="row">
+        <h2 class="col-md-12">Indoor Appliances<hr></h2>
+        <div class="col-md-4" ng-repeat="product in ctrl.products">
+          <div class="card">
+            <a href ng-click="ctrl.setId(product.id)"><img class="card-img-top" ng-src="{{ product.image }}"></a>
+            <div class="card-block">
+              <h4 class="card-title">{{ product.name }} <small class="text-muted">{{ product.category }}</small></h4>
+              <p class="card-text">{{ product.description }}</p>
+              <div class="row align-items-center">
+                <h5 class="text-center price col-md-4 offset-md-1"><b>{{ product.price | currency }}</b></h5>
+                <a ng-click="ctrl.setId(product.id)" href class="btn btn-info col-md-6" ng-hide="product.quantity === 0">Add to Cart</a>
+                <a ng-click="ctrl.setId(product.id)" href class="btn btn-info col-md-6" ng-show="product.quantity === 0">Request</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal modal-one fade">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ ctrl.products[ctrl.id].name }} <small class="text-muted">{{ ctrl.products[ctrl.id].category }}</small></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.reset()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body container">
+            <div class="row image-row">
+            	<div class="col-md-6 product-image-div">
+            		<img class="product-image" ng-src="{{ ctrl.products[ctrl.id].image }}">
+            	</div>
+            	<div class="col-md-6">
+								<div class="row product-row">
+              		<a class="product-image-small" ng-class="{ productActive:image === ctrl.products[ctrl.id].image }" ng-repeat="image in ctrl.products[ctrl.id].images" ng-click="ctrl.changeImage(ctrl.products[ctrl.id].images[$index], ctrl.id)">
+              			<img class="product-image-small-inside" ng-src="{{ image }}">
+            			</a>
+          			</div>
+            		<p class="product-description">{{ ctrl.products[ctrl.id].description }}</p>
+            		<div class="row">
+              		<h5 class="text-center price col-md-5 offset-md-1">Price: <b>{{ ctrl.products[ctrl.id].price | currency }}</b></h5>
+              		<h5 class="text-center price col-md-5">Quantity:
+                		<div class="input-group">
+                      <button class="input-group-addon add" ng-click="ctrl.add()">+</button>
+                      <input class="quantity form-control" id="quan-select" type="number" max="{{ ctrl.products[ctrl.id].quantity }}" min="1" ng-model="ctrl.option" disabled>
+                      <button class="input-group-addon" ng-click="ctrl.sub()">-</button>
+                		</div>
+                	</h5>
+            		</div>
+            	</div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-info" ng-click="ctrl.addToCart(ctrl.id, ctrl.option); ctrl.reset()">Add to Cart</button>
+            <a class="btn btn-secondary" data-dismiss="modal" ng-click="ctrl.reset()" >Cancel</a>
+          </div>
+        </div>
+      </div>
+    </div> <!-- Product Modal -->
+    <div class="modal modal-two fade">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Cart</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="container">
+            <div class="row">
+              <div class="media col-md-12" ng-repeat="item in ctrl.cart">
+                <img class="d-flex mr-3 cart-image" ng-src="{{ ctrl.products[item[0]].image }}" alt="Product Image">
+                <div class="media-body">
+                  <button type="button" class="close" aria-label="Close" ng-click="ctrl.removeFromCart($index)">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                  <h4 class="mt-0">{{ ctrl.products[item[0]].name }} <small class="text-muted">{{ ctrl.products[item[0]].category }}</small></h4>
+                  <div class="row cart-row">
+                    <h5 class="text-center price col-md-3 offset-md-1">Quantity:
+                      <div class="input-group">
+                        <button class="input-group-addon add" ng-click="ctrl.addOne($index)">+</button>
+                        <input class="quantity form-control" id="quan-select" type="number" max="{{ ctrl.cart[$index].quantity }}" min="1" ng-model="item[1]" disabled>
+                        <button class="input-group-addon" ng-click="ctrl.subOne($index)">-</button>
+                		  </div>
+                    </h5>
+                    <h5 class="text-center price col-md-3">Price: {{ item[1] * ctrl.products[item[0]].price | currency}}</h5>
+                  </div>
+                </div>
+              </div>
+              <div class="cart-total col-md-12" ng-hide="ctrl.total === 0">
+                <h4>Total: {{ ctrl.total | currency }}</h4>
+              </div>
+              <div class="cart-empty" ng-show="ctrl.total === 0">
+                <h5><small class="text-muted">You're Cart is Empty.</small></h5>
+              </div>
+            </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-info" ng-hide="ctrl.total === 0">Purchase Items</a>
+            <a class="btn btn-secondary" data-dismiss="modal">Cancel</a>
+          </div>
+        </div>
+      </div>
+    </div> <!-- Cart Modal -->
+    <div class="modal modal-three fade">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Contact</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="container">
+              <form>
+                <div class="form-group">
+                  <div class="form-input">
+                    <label for="nameInput">Name</label>
+                    <input type="text" class="form-control" id="nameInput" aria-describedby="nameInput" placeholder="John Doe">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="form-input">
+                    <label for="emailInput">Email</label>
+                    <input type=email class="form-control" id="emailInput" placeholder="john.doe@example.com">
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                  </div>
+                </div>
+                <fieldset class="form-group">
+                  <label>Reason</label>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" name="optionsRadios" id="optionsQuestion" value="option1" checked>
+                      I have a question or comment.
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" name="optionsRadios" id="optionsProblem" value="option2">
+                      I'm unsatisfied with a product.
+                    </label>
+                  </div>
+                </fieldset>
+                <div class="form-group" ng-hide="ctrl.question === false">
+                  <label for="messageInput">Message</label>
+                  <textarea class="form-control" id="messageInput" rows="3" placeholder="I had a question about your..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </form> <!-- Form  -->
+            </div> <!-- Container  -->
+          </div> <!--   Modal Body  -->
+        </div> <!-- Modal Content  -->
+      </div> <!--  Modal Dialog  -->
+    </div> <!-- Contact Modal  -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <ul class="ftr-ul col-md-2">
+            <li class="ftr-head">Company</li>
+            <li class="ftr-li"><a href>Home</a></li>
+            <li class="ftr-li"><a href>About</a></li>
+            <li class="ftr-li"><a href ng-click="ctrl.contact()">Contact</a></li>
+          </ul>
+          <ul class="ftr-ul col-md-2">
+            <li class="ftr-head">Products & User</li>
+            <li class="ftr-li"><a href ng-click="ctrl.showCart()">Cart</a></li>
+            <li class="ftr-li"><a href="#indoor-appliances">Indoor Appliances</a></li>
+            <li class="ftr-li"><a href="#outdoor-decor">Outdoor Decor</a></li>
+          </ul>
+        </div>
+        <div class="row">
+          <p class="copyright"></p>
+          <script>
+            var date = new Date;
+            var year = date.getFullYear();
+            $('.copyright').html('&copy' + year + ' Papa\'s Family Workshop');
+          </script>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+
 </html>
